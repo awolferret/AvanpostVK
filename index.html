@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Avanpost</title>
+
+    <script type="text/javascript">
+    window.yandexMetricaCounterId = parseInt(91469743);
+    </script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(window.yandexMetricaCounterId, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/91469743" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <script type="text/javascript">
+        ym(window.yandexMetricaCounterId, 'reachGoal', 'pageOpen');
+
+        addEventListener('DOMContentLoaded', (event) => {
+            const pageLoadTime = performance.timing.domContentLoadedEventStart - performance.timing.navigationStart;
+            ym(window.yandexMetricaCounterId, 'reachGoal', 'pageLoad', { pageLoadTime: pageLoadTime / 1000 });
+        });
+    </script>
+</head>
+
+<body style="margin: 0px; overflow: hidden;" oncontextmenu="return false;">
+    <canvas id="unity-canvas"
+            style="position: fixed; width: 100%; height: 100%; background: url('AgavaBcg.jpg') no-repeat center center fixed;">
+    </canvas>
+    <div id="logo-bar" style="position: fixed; left: 30%; right: 30%; top: 0%; bottom: 0%;  background:  url('logoPNG.png') no-repeat center; background-size: contain;"></div>
+    <div id="progress-bar" style="position: absolute; left: 0%; right: 100%; top: 90%; bottom: 9%; background-color: green;"></div>
+
+    <script src="Build/AvanpostVK.loader.js"></script>
+    <script>
+    const settings = {
+      dataUrl: "Build/55b6e37e55a5dd02b8a11263af3b8786.data.unityweb",
+      frameworkUrl: "Build/5531dd8448360095794aa4c37d2dfb82.js.unityweb",
+      codeUrl: "Build/7a93f9b3952d839492933171e280e589.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Agava",
+      productName: "Avanpost",
+      productVersion: "1.0.0",
+      matchWebGLToCanvasSize: true,
+      devicePixelRatio: 1.6, // Uncomment this line to enable anti-aliasing
+    };
+
+    const logo = document.querySelector("#logo-bar");
+    const progressBar = document.querySelector("#progress-bar");
+    const canvas = document.querySelector("#unity-canvas");
+
+    const unityStartLoadingTime = performance.now();
+    let unityEndLoadingTime = 0;
+    setTimeout(() => {
+      createUnityInstance(document.querySelector("#unity-canvas"), settings, (progress) => {
+        progressBar.style.right = 100 * (1 - progress) + "%";
+      }).then((unityInstance) => {
+          progressBar.style.display = "none";
+          logo.style.display = "none";
+          canvas.style.backgroundImage = "none";
+        unityEndLoadingTime = performance.now();
+        unityInstance.Module.errorHandler = (errorMessage) => {
+          const unityCrashTime = performance.now();
+          const unityCrashPlaytime = unityEndLoadingTime === 0 ? 0 : (unityCrashTime - unityEndLoadingTime) / 1000;
+          ym(window.yandexMetricaCounterId, 'reachGoal', 'unityGameCrash', { unityCrashPlaytime: unityCrashPlaytime });
+        };
+        ym(window.yandexMetricaCounterId,'reachGoal','unityStart', { unityLoadTime: (unityEndLoadingTime - unityStartLoadingTime) / 1000 });
+      }).catch((errorMessage) => {
+        ym(window.yandexMetricaCounterId, 'reachGoal', 'unityLoadingCrash');
+        alert(errorMessage);
+      });
+    }, 500); // Wait half a second before loading. Makes page more responsive on reload.
+    </script>
+</body>
+
+</html>
